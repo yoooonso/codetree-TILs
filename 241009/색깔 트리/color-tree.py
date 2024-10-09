@@ -50,8 +50,9 @@ for order in orders:
     elif order_type == 200: # 색깔 변경
         m_id, color = order[1:]
         tree[m_id][1] = color
-        for i in range(3, len(tree[m_id])):
-            tree[tree[m_id][i]][1] = color
+        if len(tree[m_id]) > 3:
+            for i in range(3, len(tree[m_id])):
+                tree[tree[m_id][i]][1] = color
 
     elif order_type == 300: # 색깔 조회
         m_id = order[1]
