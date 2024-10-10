@@ -57,6 +57,7 @@ def find_value(board):
 
     return value, puzzles
 
+printing_values = []
 for i in range(1, K+1): # K번의 턴 반복
     # 중심 좌표 선택 & 경우의 수 비교
     compare_list = []
@@ -115,5 +116,7 @@ for i in range(1, K+1): # K번의 턴 반복
         if value == 0:
             break
     # 출력 
-    print(total_value)
+    printing_values.append(str(total_value))
     board = copy.deepcopy(best_board)
+
+print(' '.join(printing_values))
