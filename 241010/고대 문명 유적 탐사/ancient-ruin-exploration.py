@@ -31,8 +31,8 @@ def find_value(board):
     value = 0
     puzzles = []
     
-    for i in range(5):
-        for j in range(5):
+    for j in range(5): # 열 번호가 작은 순 
+        for i in range(5):
             puzzle = []
             cur = board[i][j]
             if not visited[i][j]:
@@ -63,6 +63,7 @@ for i in range(1, K+1): # K번의 턴 반복
     compare_list = []
     best_value = 0
     total_value = 0
+    best_angle = 360
     for c in range(1,4): # 열 행 순 이므로
         for r in range(1,4): # 1, 2, 3 가능
             new_board = copy.deepcopy(board)
@@ -74,30 +75,33 @@ for i in range(1, K+1): # K번의 턴 반복
                 for sc in range(3):
                     new_board[sc + (r-1)][2-sr + (c-1)] = new_small_board[sr][sc]
             value, puzzles = find_value(new_board)
-            if value > best_value:
+            if value > best_value or (value == best_value and best_angle > 90):
                 best_value = value
                 best_puzzles = puzzles 
                 best_board = copy.deepcopy(new_board)
+                best_angle = 90
 
             # 회전 180 & 유물 가치 구함 & 저장 순서 - 유물 획득 가치, 회전 각도, 열, 행 순
             for sr in range(3):
                 for sc in range(3):
-                    new_board[2-sc + (r-1)][2-sr + (c-1)] = new_small_board[sr][sc]
+                    new_board[2-sr + (r-1)][2-sc + (c-1)] = new_small_board[sr][sc]
             value, puzzles = find_value(new_board)
-            if value > best_value:
+            if value > best_value or (value == best_value and best_angle > 180):
                 best_value = value
                 best_puzzles = puzzles 
                 best_board = copy.deepcopy(new_board)
+                best_angle = 180
 
             # 회전 270 & 유물 가치 구함 & 저장 순서 - 유물 획득 가치, 회전 각도, 열, 행 순
             for sr in range(3):
                 for sc in range(3):
                     new_board[2-sc + (r-1)][sr + (c-1)] = new_small_board[sr][sc]
             value, puzzles = find_value(new_board)
-            if value > best_value:
+            if value > best_value or (value == best_value and best_angle > 270):
                 best_value = value
                 best_puzzles = puzzles 
                 best_board = copy.deepcopy(new_board)
+                best_angle = 270
 
     if best_value == 0: # 아예 끝내기 
         break
