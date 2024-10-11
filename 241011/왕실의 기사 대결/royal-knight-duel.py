@@ -66,8 +66,9 @@ for i, d in order:
             break
         tmp_pos.append((ny, nx))
         for o in range(1, len(pos)): 
-            if i != o and (ny, nx) in pos[o]: # 연쇄 검사 필요한 리스트 큐에 삽입 (첫번째 연쇄)
+            if i != o and (ny, nx) in pos[o] and visited[o] == False: # 연쇄 검사 필요한 리스트 큐에 삽입 (첫번째 연쇄)
                 other_checking.append(o)
+                visited[o] = True
                 move_list.append(o)
         
     #print(i, move_list)
@@ -76,7 +77,7 @@ for i, d in order:
     if can_move and len(other_checking) > 0:
         while other_checking:
             o = other_checking.popleft()
-            visited[o] = True
+            
             for y, x in pos[o]:
                 ny = y + mov_y
                 nx = x + mov_x
@@ -89,8 +90,9 @@ for i, d in order:
                 for o_ in range(1, len(pos)): 
                     if visited[o_] == False and (ny, nx) in pos[o_]:
                         other_checking.append(o_)
-                        move_list.append(o)
-    
+                        visited[o_] = True
+                        move_list.append(o_)
+    #print(i, move_list, can_move)
     # 검사 다 끝냈으면 이동 + 데미지 계산
     if can_move:
         pos[i] = tmp_pos # 현재 기사 이동
@@ -106,8 +108,13 @@ for i, d in order:
                 pos[o] = tmp_pos # 연쇄 기사 이동 
                 if strength[o] <= 0:
                     pos[o] = []
-
+    # print(i, d)
+    # print(pos)
+    # print(strength)
+    
 total_d = 0
+# print(pos)
+# print(strength)
 for i, s in enumerate(strength[1:]):
     demage = gisa[i][4] - s
     if len(pos[i+1]) == 0:
