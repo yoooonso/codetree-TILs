@@ -88,7 +88,7 @@ for i, d in order:
 
                 for o_ in range(1, len(pos)): 
                     if visited[o_] == False and (ny, nx) in pos[o_]:
-                        queue.append(o_)
+                        other_checking.append(o_)
                         move_list.append(o)
     
     # 검사 다 끝냈으면 이동 + 데미지 계산
