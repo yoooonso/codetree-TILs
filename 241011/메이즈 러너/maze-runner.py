@@ -55,6 +55,9 @@ for _ in range(K):
             if move:
                 move_sum += 1
     
+    if finish == [True] * M:
+        break
+    
     # 회전 -> 미로, 참가자, 출구 모두 업데이트 
     # 일단 참가자 선택 
     min_dis_with_e = float('inf')
@@ -115,8 +118,6 @@ for _ in range(K):
                 exit = (square_start_y + j, square_start_x + length -1 -i)
 
     parties = new_parties
-    if finish == [True] * M:
-        break
     
 
 # 참가자 이동 거리 합 
