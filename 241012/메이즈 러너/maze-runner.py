@@ -33,68 +33,71 @@ def distance(x1, y1, x2, y2):
 
 def is_in(x, y):
     return 1<= x <=N and 1<=y <=N
+
+def find_min_square_with_exit_and_participant(N, exit, parties, length):
+    for i in range(N - length + 1):
+        for j in range(N - length + 1):
+            # 출구가 정사각형에 포함되는지 확인
+            if i <= exit[0] - 1 < i + length and j <= exit[1] - 1 < j + length:
+                # 정사각형 내부에 참가자가 있는지 확인
+                for p, party in enumerate(parties):
+                    if finish[p] == True:
+                        continue
+                    py, px = party[0], party[1]
+                    if i <= py - 1 < i + length and j <= px - 1 < j + length:
+                        return j +1, i+1  # square_start_x, square_start_y
+
 for _ in range(K):
     # 참가자 이동 
     for i, party in enumerate(parties):
-        if finish[i] == False:
-            x = party[1]
-            y = party[0]
-            cur_min = distance(x, y, exit[1], exit[0])
-            move = False
-            for d in range(4):
-                nx = x + dx[d]
-                ny = y + dy[d]
+        if finish[i]:
+            continue
 
-                if is_in(nx, ny) and miro[ny-1][nx-1] == 0 and cur_min > distance(nx, ny, exit[1], exit[0]):
-                    # 빈칸 이면 - 업데이트, 전체 이동 거리 증가
-                    cur_min = distance(nx, ny, exit[1], exit[0])
-                    parties[i] = [ny, nx]
-                    move = True
-                    if cur_min == 0:
-                        finish[i] = True
-            if move:
-                move_sum += 1
+        x = party[1]
+        y = party[0]
+        cur_min = distance(x, y, exit[1], exit[0])
+        move = False
+        for d in range(4):
+            nx = x + dx[d]
+            ny = y + dy[d]
+
+            if is_in(nx, ny) and miro[ny-1][nx-1] == 0 and cur_min > distance(nx, ny, exit[1], exit[0]):
+                # 빈칸 이면 - 업데이트, 전체 이동 거리 증가
+                cur_min = distance(nx, ny, exit[1], exit[0])
+                parties[i] = [ny, nx]
+                move = True
+                if cur_min == 0:
+                    finish[i] = True
+                break
+        if move:
+            move_sum += 1
     
     if finish == [True] * M:
         break
 
-    #print(parties)
+   # print(parties)
     
     # 회전 -> 미로, 참가자, 출구 모두 업데이트 
     # 일단 참가자 선택 
     min_dis_with_e = float('inf')
     min_x, min_y = None, None
-    select_party = None
     for i, party in enumerate(parties):
         if finish[i] == False:
-            w = abs(party[1] - exit[1]) + 1
-            h = abs(party[0] - exit[0]) + 1
-            if h < w:
-                cur_min = w
-            else:
-                cur_min = h
+            cur_min = max(abs(party[1] - exit[1]), abs(party[0] - exit[0]))+ 1
             
-            if cur_min < min_dis_with_e \
-                or (cur_min == min_dis_with_e and party[1] < min_x)\
-                or (cur_min == min_dis_with_e and party[1] == min_x and party[0] < min_y):
-                select_party = i
+            if cur_min < min_dis_with_e:
                 min_dis_with_e = cur_min
-                min_x, min_y = party[1], party[0]
     
-     # 참가자와 함께 회전 
+    # 참가자와 함께 회전 
     # 회전 부분 copy
     length = min_dis_with_e
+   # print(length)
+    #print(exit)
+    #print(parties)
 
-    if parties[select_party][1] < exit[1]:
-        square_start_x = max(1, exit[1] - length + 1)
-    else:
-        square_start_x = max(1, parties[select_party][1] - length + 1)
-    if parties[select_party][0] < exit[0]:
-        square_start_y = max(1, exit[0] - length + 1)
-    else:
-        square_start_y = max(1, parties[select_party][0] - length + 1)
+    square_start_x, square_start_y = find_min_square_with_exit_and_participant(N, exit, parties, length)
 
-    squre = copy.deepcopy([m[square_start_x-1:square_start_x-1+length] for m in miro[square_start_y-1:square_start_y-1+length]])
+    squre = [m[square_start_x-1:square_start_x-1+length] for m in miro[square_start_y-1:square_start_y-1+length]]
     new_parties = copy.deepcopy(parties)
     #copy_x_party, copy_y_party = parties[select_party][1] - square_start_x, parties[select_party][0] - square_start_y 
     copy_x_exit, copy_y_exit = exit[1] - square_start_x, exit[0] - square_start_y
@@ -120,7 +123,7 @@ for _ in range(K):
                 exit = (square_start_y + j, square_start_x + length -1 -i)
 
     parties = new_parties
-    # print(parties)
+
     
 
 # 참가자 이동 거리 합 
