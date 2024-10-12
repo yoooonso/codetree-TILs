@@ -86,16 +86,22 @@ def bfs(attacker_x, attacker_y, target_x, target_y):
     return False
 
 for k in range(K):
-    # 공격자 선정 
+    
     search = return_search(board, attack)
+
+    if len(search) < 2:
+        break
+
     search = sorted(search, key=lambda x: (x[0], -x[1], -x[2], -x[3]))
 
+    # 공격자 선정 
     attacker_x, attacker_y = search[0][3], search[0][4]
     attacker_lv = search[0][0] + handi
     board[attacker_y][attacker_x] = attacker_lv
     attack[attacker_y][attacker_x] = k + 1
 
     # 타켓 선정 
+
     target_x, target_y = search[-1][3], search[-1][4]
     target_lv = search[-1][0]
 
