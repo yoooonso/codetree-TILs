@@ -73,7 +73,7 @@ def bfs(attacker_x, attacker_y, target_x, target_y):
                 fset.add((px, py))
                 y = py
                 x = px
-               # print(board)
+                #print(board)
 
         for i in range(4):
             nx = (x + dx[i]) % M
@@ -109,15 +109,18 @@ for k in range(K):
     if bfs(attacker_x, attacker_y, target_x, target_y) == False:
         # 포탄
         board[target_y][target_x] = max(0, board[target_y][target_x] - board[attacker_y][attacker_x])
+        #print(board)
+        for i in range(-1, 2, 1):
+            for j in range(-1, 2, 1):
+                if (i ==0 and j ==0):
+                    continue 
 
-        for i in range(-1, 2):
-            for j in range(-1, 2):
-                if not i==0 and j==0:
-                    y = (target_y+i) % N
-                    x = (target_x+j) % M
-                    board[y][x] = max(0, board[y][x] - board[attacker_y][attacker_x] //2)
-                    fset.add((x, y))
-    
+                y = (target_y+i) % N
+                x = (target_x+j) % M
+                
+                board[y][x] = max(0, board[y][x] - board[attacker_y][attacker_x] //2)
+                fset.add((x, y))
+
 
     # 정비 
     for i in range(N):
