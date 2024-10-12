@@ -60,26 +60,24 @@ def bfs(attacker_x, attacker_y, target_x, target_y):
         x, y = queue.popleft()
 
         if x == target_x and y == target_y:
-            board[target_y][target_x] = max(0, board[y][x]- board[attacker_y][attacker_x])
+            board[y][x] = max(0, board[y][x]- board[attacker_y][attacker_x])
 
             while 1:
-                px, py = visited[y][x]
+                x, y = visited[y][x]
                 #print(y, x, py, px, ' ddd')
 
-                if px == attacker_x and py == attacker_y:
+                if x == attacker_x and y == attacker_y:
                     return True
 
-                board[py][px] = max(0, board[py][px]- board[attacker_y][attacker_x] // 2)
-                fset.add((px, py))
-                y = py
-                x = px
+                board[y][x] = max(0, board[y][x]- board[attacker_y][attacker_x] // 2)
+                fset.add((x, y))
                 #print(board)
 
         for i in range(4):
             nx = (x + dx[i]) % M
             ny = (y + dy[i]) % N
 
-            if board[ny][nx] != 0 and len(visited[ny][nx]) == 0:
+            if board[ny][nx] > 0 and len(visited[ny][nx]) == 0:
                 queue.append((nx, ny))
                 visited[ny][nx] = (x,y)
     
@@ -89,7 +87,7 @@ for k in range(K):
     
     search = return_search(board, attack)
 
-    if len(search) < 2:
+    if len(search) <= 1:
         break
 
     search = sorted(search, key=lambda x: (x[0], -x[1], -x[2], -x[3]))
@@ -102,10 +100,10 @@ for k in range(K):
 
     # 타켓 선정 
 
-    target_x, target_y = search[-1][3], search[-1][4]
-    target_lv = search[-1][0]
+    target_x, target_y = search[len(search)-1][3], search[len(search)-1][4]
+    target_lv = search[len(search)-1][0]
 
-    #print(attacker_x, attacker_y, target_x, target_y)
+    #print(attacker_x, attacker_y, attacker_lv, target_x, target_y, target_lv)
     
     # 레이저 공격
     # 최단 거리 찾기 - BFS, 경로 저장 
@@ -123,6 +121,9 @@ for k in range(K):
 
                 y = (target_y+i) % N
                 x = (target_x+j) % M
+
+                if (y == attacker_y and x == attacker_x):
+                    continue
                 
                 board[y][x] = max(0, board[y][x] - board[attacker_y][attacker_x] //2)
                 fset.add((x, y))
@@ -133,6 +134,8 @@ for k in range(K):
         for j in range(M):
             if (j, i) not in fset and board[i][j] > 0:
                 board[i][j] += 1
+    
+    #print(board)
 
 
 print(max(map(max, board)))
