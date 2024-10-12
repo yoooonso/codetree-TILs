@@ -56,7 +56,7 @@ def bfs(attacker_x, attacker_y, target_x, target_y):
     queue.append((attacker_x, attacker_y))
     visited[attacker_y][attacker_x] = (attacker_x, attacker_y)
 
-    while 1:
+    while queue:
         x, y = queue.popleft()
 
         if x == target_x and y == target_y:
